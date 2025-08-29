@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+release/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Vite cache
+.vite/
+
+# Environment files
+.env
+.env.local
+
+# Logs
+*.log
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# macOS
+.DS_Store
+._*
+
+# Distribution files (from electron-builder)
+*.dmg
+
+# Temporary files
+tmp/

@@ -1,0 +1,80 @@
+/*
+ * Global Styles for Clipboard Manager
+ * Custom styles that complement Tailwind CSS
+ */
+
+/* =============================================================================
+   Scrollbar Styling (WebKit only)
+   ============================================================================= */
+.history-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.history-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.history-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.history-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* =============================================================================
+   Custom Gradient Backgrounds
+   ============================================================================= */
+.bg-gradient-purple {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-purple-light {
+    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+}
+
+.bg-gradient-index {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* =============================================================================
+   Enhanced Animations & Transitions
+   ============================================================================= */
+.smooth-hover {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =============================================================================
+   Utility Classes
+   ============================================================================= */
+.glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* =============================================================================
+   macOS-specific Styles
+   ============================================================================= */
+@media (prefers-color-scheme: dark) {
+    /* Dark mode support can be added here in the future */
+}
