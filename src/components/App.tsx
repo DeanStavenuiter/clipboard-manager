@@ -105,7 +105,7 @@ const App: React.FC = () => {
   }, [selectedIndex, clipboardHistory.length, handleCopyToClipboard, handleDeleteItem]);
 
   return (
-    <div className="font-system bg-gradient-purple text-gray-800 h-screen overflow-hidden">
+    <div className="font-system bg-gradient-primary text-gray-800 h-screen overflow-hidden">
       <div className="h-screen flex flex-col bg-white bg-opacity-95 backdrop-blur-sm">
         <Header />
         

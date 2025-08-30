@@ -26,16 +26,16 @@
 /* =============================================================================
    Custom Gradient Backgrounds
    ============================================================================= */
-.bg-gradient-purple {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #315899 0%, #1E3A66 100%);
 }
 
-.bg-gradient-purple-light {
-    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+.bg-gradient-primary-light {
+    background: linear-gradient(135deg, #31589915 0%, #1E3A6615 100%);
 }
 
 .bg-gradient-index {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #315899, #1E3A66);
 }
 
 /* =============================================================================

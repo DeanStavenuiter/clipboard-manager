@@ -23,8 +23,8 @@ const ClipboardItem: React.FC<ClipboardItemProps> = ({
     onDelete();
   };
 
-  const baseClasses = "bg-white rounded-xl mb-2 p-4 shadow-md cursor-pointer transition-all duration-200 border-2 relative hover:-translate-y-0.5 hover:shadow-lg hover:border-indigo-400 animate-fade-in";
-  const selectedClasses = isSelected ? "border-indigo-400 bg-gradient-purple-light" : "border-transparent";
+  const baseClasses = "bg-white rounded-xl mb-2 p-4 shadow-md cursor-pointer transition-all duration-200 border-2 relative hover:-translate-y-0.5 hover:shadow-lg hover:border-primary animate-fade-in";
+  const selectedClasses = isSelected ? "border-primary bg-gradient-primary-light" : "border-transparent";
 
   const renderContent = () => {
     if (item.type === 'image') {

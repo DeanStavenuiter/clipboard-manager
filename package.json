@@ -66,6 +66,7 @@
         "dist/preload.js",
         "dist/assets/",
         "dist/styles/",
+        "assets/",
         "package.json"
       ]
     }

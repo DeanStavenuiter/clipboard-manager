@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, clipboard, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, globalShortcut, clipboard, ipcMain, Menu, Tray, nativeImage } from 'electron';
 import * as path from 'path';
 
 interface ClipboardHistoryItem {
@@ -21,6 +21,7 @@ declare global {
 
 class ClipboardManager {
   private mainWindow: BrowserWindow | null = null;
+  private tray: Tray | null = null;
   private clipboardHistory: ClipboardHistoryItem[] = [];
   private readonly MAX_HISTORY = 25;
   private lastClipboardContent = '';
@@ -31,11 +32,16 @@ class ClipboardManager {
   }
 
   private setupApp(): void {
+    // Hide from dock on macOS (make it a tray-only app)
+    if (process.platform === 'darwin') {
+      app.dock.hide();
+    }
+
     app.whenReady().then(() => {
       this.createWindow();
+      this.createTray();
       this.registerGlobalShortcuts();
       this.startClipboardMonitoring();
-      this.createMenuBar();
       this.setupIpcHandlers();
     });
 
@@ -52,7 +58,7 @@ class ClipboardManager {
       frame: true,
       resizable: true,
       alwaysOnTop: true,
-      skipTaskbar: false,
+      skipTaskbar: true,  // Hide from dock/taskbar
       webPreferences: {
         nodeIntegration: false,           // Disabled for security
         contextIsolation: true,           // Enabled for security
@@ -84,6 +90,64 @@ class ClipboardManager {
     // Development: Open DevTools
     if (process.env.NODE_ENV === 'development') {
       this.mainWindow.webContents.openDevTools();
+    }
+  }
+
+  private createTray(): void {
+    // Create tray icon from PNG
+    const iconPath = 'assets/clipboard-25px.png';
+    
+    console.log('Looking for icon at:', iconPath);
+    
+    let icon = nativeImage.createFromPath(iconPath)
+    
+    icon.setTemplateImage(true); // This makes it adapt to light/dark mode on macOS
+    
+    this.tray = new Tray(icon);
+    this.tray.setToolTip('Clipboard Manager');
+    
+    // Create context menu for tray
+    const contextMenu = Menu.buildFromTemplate([
+      {
+        label: 'Show Clipboard History',
+        click: () => {
+          this.toggleWindow();
+        }
+      },
+      {
+        label: 'Clear History',
+        click: () => {
+          this.clipboardHistory = [];
+          this.lastClipboardContent = '';
+          this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
+        }
+      },
+      { type: 'separator' },
+      {
+        label: 'Quit Clipboard Manager',
+        click: () => {
+          app.isQuiting = true;
+          app.quit();
+        }
+      }
+    ]);
+    
+    this.tray.setContextMenu(contextMenu);
+    
+    // Click to toggle window
+    this.tray.on('click', () => {
+      this.toggleWindow();
+    });
+  }
+
+  private toggleWindow(): void {
+    if (this.mainWindow?.isVisible()) {
+      this.mainWindow.hide();
+    } else {
+      this.mainWindow?.show();
+      this.mainWindow?.focus();
+      // Send current history when window opens
+      this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
     }
   }
 
@@ -194,14 +258,7 @@ class ClipboardManager {
 
   private registerGlobalShortcuts(): void {
     const ret = globalShortcut.register('CommandOrControl+Shift+V', () => {
-      if (this.mainWindow?.isVisible()) {
-        this.mainWindow.hide();
-      } else {
-        this.mainWindow?.show();
-        this.mainWindow?.focus();
-        // Send current history when window opens
-        this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
-      }
+      this.toggleWindow();
     });
 
     if (!ret) {
@@ -209,47 +266,7 @@ class ClipboardManager {
     }
   }
 
-  private createMenuBar(): void {
-    const template: Electron.MenuItemConstructorOptions[] = [
-      {
-        label: 'Clipboard Manager',
-        submenu: [
-          {
-            label: 'Show Clipboard History',
-            accelerator: 'CommandOrControl+Shift+V',
-            click: () => {
-              this.mainWindow?.show();
-              this.mainWindow?.focus();
-            }
-          },
-          { type: 'separator' },
-          {
-            label: 'Clear History',
-            click: () => {
-              this.clipboardHistory = [];
-              this.lastClipboardContent = '';
-              this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
-            }
-          },
-          { type: 'separator' },
-          {
-            label: 'Quit',
-            accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
-            click: () => {
-              app.isQuiting = true;
-              app.quit();
-            }
-          }
-        ]
-      }
-    ];
 
-    if (process.platform === 'darwin') {
-      // macOS specific menu handling
-      const menu = Menu.buildFromTemplate(template);
-      Menu.setApplicationMenu(menu);
-    }
-  }
 
   private setupIpcHandlers(): void {
     // Handle IPC messages
@@ -283,10 +300,8 @@ class ClipboardManager {
   }
 
   private onWindowAllClosed(): void {
-    // On macOS, keep the app running even when all windows are closed
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
+    // Don't quit the app when windows are closed - it's a tray app
+    // User needs to explicitly quit from tray menu
   }
 
   private onActivate(): void {
