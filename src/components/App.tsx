@@ -131,6 +131,10 @@ const App: React.FC = () => {
     setSearchTerm('');
   }, []);
 
+  const handleOpenPreferences = useCallback(() => {
+    setShowPreferences(true);
+  }, []);
+
   const handleSelectItem = useCallback((index: number) => {
     setSelectedIndex(index);
   }, []);
@@ -235,6 +239,7 @@ const App: React.FC = () => {
           itemCount={searchTerm ? filteredHistory.length : clipboardHistory.length}
           totalCount={searchTerm ? clipboardHistory.length : undefined}
           isSearching={!!searchTerm}
+          onOpenPreferences={handleOpenPreferences}
         />
       </div>
     </div>

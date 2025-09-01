@@ -34,6 +34,7 @@ class ClipboardManager {
   private tray: Tray | null = null;
   private clipboardHistory: ClipboardHistoryItem[] = [];
   private lastClipboardContent = '';
+  private lastNotifiedContent = ''; // Track last content we showed notification for
   private clipboardMonitorInterval: NodeJS.Timeout | null = null;
   private preferences: PreferencesData = {
     maxHistoryItems: 25,
@@ -205,6 +206,7 @@ class ClipboardManager {
     const contextMenu = Menu.buildFromTemplate([
       {
         label: 'Open Trex',
+        accelerator: 'CommandOrControl+Shift+V',
         click: () => {
           this.toggleWindow();
         }
@@ -214,6 +216,8 @@ class ClipboardManager {
         click: () => {
           this.clipboardHistory = [];
           this.lastClipboardContent = '';
+          this.lastNotifiedContent = '';
+          this.saveClipboardHistory();
           this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
         }
       },
@@ -226,6 +230,7 @@ class ClipboardManager {
       { type: 'separator' },
       {
         label: 'Quit Trex',
+        accelerator: 'CommandOrControl+Q',
         click: () => {
           app.isQuiting = true;
           app.quit();
@@ -313,9 +318,13 @@ class ClipboardManager {
 
     // Check if content looks like a password and should be excluded
     if (this.preferences.excludePasswords && this.looksLikePassword(content)) {
-      if (this.preferences.showNotifications) {
+      // Only show notification if we haven't already notified about this content
+      if (this.preferences.showNotifications && content !== this.lastNotifiedContent) {
         this.showNotification('Password Detected', 'Password was not added to clipboard history for security.');
+        this.lastNotifiedContent = content;
       }
+      // Update lastClipboardContent to prevent re-processing this same password
+      this.lastClipboardContent = content;
       return;
     }
 
@@ -336,6 +345,9 @@ class ClipboardManager {
     this.clipboardHistory.unshift(newItem);
     this.limitHistorySize();
     this.lastClipboardContent = content;
+    
+    // Clear notification tracking since we have new valid content
+    this.lastNotifiedContent = '';
 
     // Save to disk and send updated history to renderer
     this.saveClipboardHistory();
@@ -369,6 +381,9 @@ class ClipboardManager {
     this.clipboardHistory.unshift(newItem);
     this.limitHistorySize();
     this.lastClipboardContent = imageDataUrl;
+    
+    // Clear notification tracking since we have new valid content
+    this.lastNotifiedContent = '';
 
     // Save to disk and send updated history to renderer
     this.saveClipboardHistory();
@@ -414,10 +429,10 @@ class ClipboardManager {
     // Initial clipboard check
     this.monitorClipboard();
     
-    // Start monitoring clipboard every 500ms
+    // Start monitoring clipboard every 1000ms (reduced frequency to avoid excessive notifications)
     this.clipboardMonitorInterval = setInterval(() => {
       this.monitorClipboard();
-    }, 500);
+    }, 1000);
 
     // Set up auto-cleanup if enabled
     this.setupAutoCleanup();
@@ -503,6 +518,8 @@ class ClipboardManager {
 
     ipcMain.handle('clear-history', () => {
       this.clipboardHistory = [];
+      this.lastClipboardContent = '';
+      this.lastNotifiedContent = '';
       this.saveClipboardHistory();
       this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
     });
