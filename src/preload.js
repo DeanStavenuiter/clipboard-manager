@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   copyToClipboard: (item) => ipcRenderer.invoke('copy-to-clipboard', item),
   deleteHistoryItem: (index) => ipcRenderer.invoke('delete-history-item', index),
   clearHistory: () => ipcRenderer.invoke('clear-history'),
+  toggleFavorite: (itemId) => ipcRenderer.invoke('toggle-favorite', itemId),
 
   // Event listeners
   onClipboardHistoryUpdated: (callback) => {

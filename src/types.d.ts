@@ -39,6 +39,7 @@ declare global {
       copyToClipboard: (item: ClipboardHistoryItem) => Promise<void>;
       deleteHistoryItem: (index: number) => Promise<void>;
       clearHistory: () => Promise<void>;
+      toggleFavorite: (itemId: string) => Promise<void>;
       onClipboardHistoryUpdated: (callback: (history: ClipboardHistoryItem[]) => void) => void;
       closeWindow: () => Promise<void>;
       removeAllListeners: (channel: string) => void;
@@ -67,6 +68,7 @@ interface ClipboardHistoryItem {
   timestamp: string;
   preview: string; // For text: truncated text, for images: thumbnail or filename
   size?: number; // For images: file size in bytes
+  isFavorite?: boolean; // Whether the item is marked as favorite
 }
 
 // Re-export for components

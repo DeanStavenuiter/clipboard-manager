@@ -11,6 +11,7 @@ const App: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [showPreferences, setShowPreferences] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState<boolean>(false);
 
   // Date utility function
   const isSameDay = (date1: Date, date2: Date): boolean => {
@@ -56,16 +57,24 @@ const App: React.FC = () => {
     }
   };
 
-  // Filter clipboard history based on search term
+  // Filter clipboard history based on search term and favorites
   const filteredHistory = React.useMemo(() => {
     try {
+      let filtered = clipboardHistory;
+      
+      // First filter by favorites if enabled
+      if (showFavoritesOnly) {
+        filtered = filtered.filter(item => item.isFavorite === true);
+      }
+      
+      // Then filter by search term if provided
       if (!searchTerm.trim()) {
-        return clipboardHistory;
+        return filtered;
       }
       
       const searchLower = searchTerm.toLowerCase().trim();
       
-      return clipboardHistory.filter(item => {
+      return filtered.filter(item => {
         try {
           // Search in preview text for both text and image items
           const previewMatch = item.preview.toLowerCase().includes(searchLower);
@@ -96,7 +105,7 @@ const App: React.FC = () => {
       // Return unfiltered history if there's a major error
       return clipboardHistory;
     }
-  }, [clipboardHistory, searchTerm]);
+  }, [clipboardHistory, searchTerm, showFavoritesOnly]);
 
   // Load initial history
   useEffect(() => {
@@ -202,6 +211,18 @@ const App: React.FC = () => {
     setShowPreferences(true);
   }, []);
 
+  const handleToggleFavorite = useCallback(async (itemId: string) => {
+    try {
+      await window.electronAPI.toggleFavorite(itemId);
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+    }
+  }, []);
+
+  const handleToggleFavoritesFilter = useCallback(() => {
+    setShowFavoritesOnly(prev => !prev);
+  }, []);
+
   const handleSelectItem = useCallback((index: number) => {
     setSelectedIndex(index);
   }, []);
@@ -276,6 +297,8 @@ const App: React.FC = () => {
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           onSearchClear={handleSearchClear}
+          showFavoritesOnly={showFavoritesOnly}
+          onToggleFavoritesFilter={handleToggleFavoritesFilter}
         />
         
         <div className="history-container flex-1 overflow-y-auto p-2">
@@ -297,6 +320,7 @@ const App: React.FC = () => {
                 onCopy={() => handleCopyToClipboard(index)}
                 onDelete={() => handleDeleteItem(index)}
                 onSelect={() => handleSelectItem(index)}
+                onToggleFavorite={() => handleToggleFavorite(item.id)}
               />
             ))
           )}

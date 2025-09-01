@@ -5,12 +5,16 @@ interface HeaderProps {
   searchTerm?: string;
   onSearchChange?: (term: string) => void;
   onSearchClear?: () => void;
+  showFavoritesOnly?: boolean;
+  onToggleFavoritesFilter?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ 
-  searchTerm = "", 
-  onSearchChange, 
-  onSearchClear 
+const Header: React.FC<HeaderProps> = ({
+  searchTerm = "",
+  onSearchChange,
+  onSearchClear,
+  showFavoritesOnly = false,
+  onToggleFavoritesFilter,
 }) => {
   return (
     <div className="px-5 py-4 bg-white bg-opacity-90 border-b border-black border-opacity-10 backdrop-blur-lg">
@@ -20,16 +24,16 @@ const Header: React.FC<HeaderProps> = ({
           Trex your clipboard manager
         </h1>
       </div>
-      
-      {/* Search Input */}
+
+      {/* Search Input and Favorites Button */}
       {onSearchChange && (
-        <div className="mt-3 relative">
-          <div className="relative">
+        <div className="mt-3 flex items-center gap-2">
+          <div className="relative flex-1">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-                              placeholder="Search by content, type, or dates"
+              placeholder="Search by content, type, or dates"
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white bg-opacity-80 backdrop-blur-sm"
               autoFocus={false}
             />
@@ -43,11 +47,29 @@ const Header: React.FC<HeaderProps> = ({
               </button>
             )}
           </div>
+
+          {/* Favorites Filter Button */}
+          {onToggleFavoritesFilter && (
+            <button
+              onClick={onToggleFavoritesFilter}
+              className={`w-9 h-9 rounded-full flex items-center justify-center text-sm transition-colors duration-200 ${
+                showFavoritesOnly
+                  ? "bg-yellow-500 text-white hover:bg-yellow-600"
+                  : "bg-gray-100 text-gray-600 hover:bg-yellow-100 hover:text-yellow-700"
+              }`}
+              title={
+                showFavoritesOnly ? "Show all items" : "Show favorites only"
+              }
+            >
+              {showFavoritesOnly ? "★" : "☆"}
+            </button>
+          )}
         </div>
       )}
 
       <p className="text-xs text-gray-500 mt-3">
-        Click any item to copy it to your clipboard. Search by content, type (text/image), or dates (1/9/2025)
+        Click any item to copy it to your clipboard. Search by content, type
+        (text/image), or dates (1/9/2025)
       </p>
       <div className="text-xs text-gray-400 mt-2">
         <strong>⌘+Shift+V</strong> Toggle window • <strong>⌫</strong> Delete

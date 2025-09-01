@@ -8,6 +8,7 @@ interface ClipboardItemProps {
   onCopy: () => void;
   onDelete: () => void;
   onSelect: () => void;
+  onToggleFavorite: () => void;
 }
 
 const ClipboardItem: React.FC<ClipboardItemProps> = ({
@@ -17,10 +18,16 @@ const ClipboardItem: React.FC<ClipboardItemProps> = ({
   onCopy,
   onDelete,
   onSelect,
+  onToggleFavorite,
 }) => {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete();
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleFavorite();
   };
 
   const baseClasses = "bg-white rounded-xl mb-2 p-4 shadow-md cursor-pointer transition-all duration-200 border-2 relative hover:-translate-y-0.5 hover:shadow-lg hover:border-primary animate-fade-in";
@@ -59,9 +66,9 @@ const ClipboardItem: React.FC<ClipboardItemProps> = ({
       {renderContent()}
       <div className="flex justify-between items-center text-xs text-gray-500">
         <div className="flex items-center gap-2">
-          <span className="bg-gradient-index text-white px-1.5 py-0.5 rounded font-semibold">
+          {/* <span className="bg-gradient-index text-white px-1.5 py-0.5 rounded font-semibold">
             {index < 9 ? index + 1 : ''}
-          </span>
+          </span> */}
           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
             item.type === 'image' 
               ? 'bg-blue-100 text-blue-700' 
@@ -72,12 +79,25 @@ const ClipboardItem: React.FC<ClipboardItemProps> = ({
           </span>
         </div>
         <span>{item.timestamp}</span>
-        <button
-          className="bg-red-500 text-white border-none rounded px-2 py-1 text-xs cursor-pointer transition-colors duration-200 opacity-70 hover:bg-red-600 hover:opacity-100"
-          onClick={handleDelete}
-        >
-          Delete
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            className={`border-none rounded px-2 py-1 text-xs cursor-pointer transition-colors duration-200 ${
+              item.isFavorite
+                ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                : 'bg-gray-200 text-gray-600 hover:bg-yellow-200 hover:text-yellow-700'
+            }`}
+            onClick={handleToggleFavorite}
+            title={item.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            {item.isFavorite ? '★' : '☆'}
+          </button>
+          <button
+            className="bg-red-500 text-white border-none rounded px-2 py-1 text-xs cursor-pointer transition-colors duration-200 opacity-70 hover:bg-red-600 hover:opacity-100"
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   );

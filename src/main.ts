@@ -10,6 +10,7 @@ interface ClipboardHistoryItem {
   timestamp: string;
   preview: string; // For text: truncated text, for images: thumbnail or filename
   size?: number; // For images: file size in bytes
+  isFavorite?: boolean; // Whether the item is marked as favorite
 }
 
 interface PreferencesData {
@@ -221,7 +222,8 @@ class ClipboardManager {
       {
         label: 'Clear History...',
         click: () => {
-          this.clipboardHistory = [];
+          // Preserve favorites when clearing history from tray
+          this.clipboardHistory = this.clipboardHistory.filter(item => item.isFavorite === true);
           this.lastClipboardContent = '';
           this.lastNotifiedContent = '';
           this.saveClipboardHistory();
@@ -407,10 +409,15 @@ class ClipboardManager {
     this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
   }
 
-  // Limit the history size
+  // Limit the history size (preserving favorites)
   private limitHistorySize(): void {
-    if (this.clipboardHistory.length > this.preferences.maxHistoryItems) {
-      this.clipboardHistory = this.clipboardHistory.slice(0, this.preferences.maxHistoryItems);
+    const nonFavorites = this.clipboardHistory.filter(item => !item.isFavorite);
+    const favorites = this.clipboardHistory.filter(item => item.isFavorite);
+    
+    // Only trim non-favorites if we exceed the limit
+    if (nonFavorites.length > this.preferences.maxHistoryItems) {
+      const trimmedNonFavorites = nonFavorites.slice(0, this.preferences.maxHistoryItems);
+      this.clipboardHistory = [...favorites, ...trimmedNonFavorites];
       // Note: We don't save here since this is called from add methods that already save
     }
   }
@@ -534,11 +541,21 @@ class ClipboardManager {
     });
 
     ipcMain.handle('clear-history', () => {
-      this.clipboardHistory = [];
+      // Preserve favorites when clearing history
+      this.clipboardHistory = this.clipboardHistory.filter(item => item.isFavorite === true);
       this.lastClipboardContent = '';
       this.lastNotifiedContent = '';
       this.saveClipboardHistory();
       this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
+    });
+
+    ipcMain.handle('toggle-favorite', (event, itemId: string) => {
+      const item = this.clipboardHistory.find(item => item.id === itemId);
+      if (item) {
+        item.isFavorite = !item.isFavorite;
+        this.saveClipboardHistory();
+        this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
+      }
     });
 
     // Preferences handlers
@@ -553,9 +570,13 @@ class ClipboardManager {
       // Save to file
       this.savePreferencesToFile();
       
-      // Update max history if changed
-      if (this.clipboardHistory.length > this.preferences.maxHistoryItems) {
-        this.clipboardHistory = this.clipboardHistory.slice(0, this.preferences.maxHistoryItems);
+      // Update max history if changed (preserving favorites)
+      const nonFavorites = this.clipboardHistory.filter(item => !item.isFavorite);
+      const favorites = this.clipboardHistory.filter(item => item.isFavorite);
+      
+      if (nonFavorites.length > this.preferences.maxHistoryItems) {
+        const trimmedNonFavorites = nonFavorites.slice(0, this.preferences.maxHistoryItems);
+        this.clipboardHistory = [...favorites, ...trimmedNonFavorites];
         this.saveClipboardHistory();
         this.mainWindow?.webContents.send('clipboard-history-updated', this.clipboardHistory);
       }
