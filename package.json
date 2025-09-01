@@ -1,73 +1,76 @@
 {
-    "name": "clipboard-manager",
+    "name": "trex",
     "version": "1.0.0",
-    "description": "A clipboard manager for macOS with history and keyboard shortcuts",
+    "description": "Trex is a clipboard manager for macOS with history and keyboard shortcuts",
     "main": "dist/main.js",
-      "scripts": {
-    "start": "npm run build && electron .",
-    "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\" \"wait-on http://localhost:5173 && electron .\"",
-    "dev:renderer": "vite",
-    "dev:main": "tsc src/main.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop --sourceMap --watch",
-    "build": "npm run build:main && npm run build:renderer",
-    "build:main": "tsc src/main.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop",
-    "build:renderer": "vite build && cp src/preload.js dist/",
-    "preview": "vite preview",
-    "electron-dev": "electron .",
-    "electron-pack": "electron-builder",
-    "dist": "electron-builder --publish=never",
-    "pack": "electron-builder --dir"
-  },
+    "scripts": {
+        "start": "npm run build && electron .",
+        "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\" \"wait-on http://localhost:5173 && electron .\"",
+        "dev:renderer": "vite",
+        "dev:main": "tsc src/main.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop --sourceMap --watch",
+        "build": "npm run build:main && npm run build:renderer",
+        "build:main": "tsc src/main.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop",
+        "build:renderer": "vite build && cp src/preload.js dist/",
+        "preview": "vite preview",
+        "electron-dev": "electron .",
+        "electron-pack": "electron-builder",
+        "dist": "electron-builder --publish=never",
+        "pack": "electron-builder --dir"
+    },
     "keywords": [
-      "clipboard",
-      "manager",
-      "macos",
-      "productivity"
+        "clipboard",
+        "manager",
+        "macos",
+        "productivity",
+        "trex"
     ],
     "author": "Dean Stavenuiter",
     "license": "MIT",
-      "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "electron": "^28.0.0",
-    "electron-builder": "^24.6.4",
-    "typescript": "^5.3.0",
-    "concurrently": "^8.2.0",
-    "wait-on": "^7.2.0",
-    "@types/node": "^20.10.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@vitejs/plugin-react": "^4.2.0",
-    "vite": "^5.0.0"
-  },
+    "dependencies": {
+        "canvas": "^3.2.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "@types/react": "^18.2.0",
+        "@types/react-dom": "^18.2.0",
+        "@vitejs/plugin-react": "^4.2.0",
+        "concurrently": "^8.2.0",
+        "electron": "^28.0.0",
+        "electron-builder": "^24.6.4",
+        "typescript": "^5.3.0",
+        "vite": "^5.0.0",
+        "wait-on": "^7.2.0"
+    },
     "build": {
-      "appId": "com.deanstavenuiter.clipboard-manager",
-      "productName": "Clipboard Manager",
-      "directories": {
-        "output": "release"
-      },
-      "mac": {
-        "category": "public.app-category.productivity",
-        "identity": null,
-        "target": [
-          {
-            "target": "dmg",
-            "arch": [
-              "x64",
-              "arm64"
+        "appId": "com.deanstavenuiter.trex",
+        "productName": "Trex",
+        "directories": {
+            "output": "release"
+        },
+        "mac": {
+            "category": "public.app-category.productivity",
+            "identity": null,
+            "target": [
+                {
+                    "target": "dmg",
+                    "arch": [
+                        "x64",
+                        "arm64"
+                    ]
+                }
             ]
-          }
+        },
+        "files": [
+            "dist/main.js",
+            "dist/index.html",
+            "dist/preload.js",
+            "dist/assets/",
+            "dist/styles/",
+            "assets/",
+            "public/",
+            "package.json"
         ]
-      },
-                "files": [
-        "dist/main.js",
-        "dist/index.html",
-        "dist/preload.js",
-        "dist/assets/",
-        "dist/styles/",
-        "assets/",
-        "package.json"
-      ]
     }
-  }
+}

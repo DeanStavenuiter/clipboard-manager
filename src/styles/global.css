@@ -27,15 +27,15 @@
    Custom Gradient Backgrounds
    ============================================================================= */
 .bg-gradient-primary {
-    background: linear-gradient(135deg, #315899 0%, #1E3A66 100%);
+    background: linear-gradient(135deg, #5FB845 0%, #023531 100%);
 }
 
 .bg-gradient-primary-light {
-    background: linear-gradient(135deg, #31589915 0%, #1E3A6615 100%);
+    background: linear-gradient(135deg, #5FB84515 0%, #02353115 100%);
 }
 
 .bg-gradient-index {
-    background: linear-gradient(135deg, #315899, #1E3A66);
+    background: linear-gradient(135deg, #5FB845, #023531);
 }
 
 /* =============================================================================

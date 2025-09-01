@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getClipboardHistory: () => ipcRenderer.invoke('get-clipboard-history'),
   copyToClipboard: (item) => ipcRenderer.invoke('copy-to-clipboard', item),
   deleteHistoryItem: (index) => ipcRenderer.invoke('delete-history-item', index),
+  clearHistory: () => ipcRenderer.invoke('clear-history'),
 
   // Event listeners
   onClipboardHistoryUpdated: (callback) => {
@@ -15,17 +16,27 @@ contextBridge.exposeInMainWorld('electronAPI', {
     });
   },
 
+  onShowPreferences: (callback) => {
+    ipcRenderer.on('show-preferences', () => {
+      callback();
+    });
+  },
+
+  onShowClipboardHistory: (callback) => {
+    ipcRenderer.on('show-clipboard-history', () => {
+      callback();
+    });
+  },
+
   // Window operations
   closeWindow: () => ipcRenderer.invoke('close-window'),
+  
+  // Preferences operations
+  getPreferences: () => ipcRenderer.invoke('get-preferences'),
+  savePreferences: (preferences) => ipcRenderer.invoke('save-preferences', preferences),
   
   // Remove listeners (important for cleanup)
   removeAllListeners: (channel) => {
     ipcRenderer.removeAllListeners(channel);
   }
 });
-
-// Optional: Expose a limited set of Node.js APIs if needed
-// contextBridge.exposeInMainWorld('nodeAPI', {
-//   platform: process.platform,
-//   version: process.version
-// });

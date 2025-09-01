@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   root: 'src',
   base: './',
+  publicDir: resolve(__dirname, 'public'),
   build: {
     outDir: '../dist',
     emptyOutDir: false, // Don't clear dist folder (keeps main.js)

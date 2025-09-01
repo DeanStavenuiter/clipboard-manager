@@ -3,11 +3,33 @@ import ClipboardItem from './ClipboardItem';
 import EmptyState from './EmptyState';
 import Header from './Header';
 import StatusBar from './StatusBar';
+import Preferences from './Preferences';
 import type { ClipboardHistoryItem } from '../types';
 
 const App: React.FC = () => {
   const [clipboardHistory, setClipboardHistory] = useState<ClipboardHistoryItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const [showPreferences, setShowPreferences] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  // Filter clipboard history based on search term
+  const filteredHistory = React.useMemo(() => {
+    if (!searchTerm.trim()) {
+      return clipboardHistory;
+    }
+    
+    const searchLower = searchTerm.toLowerCase().trim();
+    return clipboardHistory.filter(item => {
+      // Search in preview text for both text and image items
+      const previewMatch = item.preview.toLowerCase().includes(searchLower);
+      
+      // For text items, also search in the full content
+      const contentMatch = item.type === 'text' && 
+        item.content.toLowerCase().includes(searchLower);
+      
+      return previewMatch || contentMatch;
+    });
+  }, [clipboardHistory, searchTerm]);
 
   // Load initial history
   useEffect(() => {
@@ -30,39 +52,83 @@ const App: React.FC = () => {
       if (selectedIndex >= history.length) {
         setSelectedIndex(history.length - 1);
       }
+      // Reset preferences view when clipboard history is updated (normal window open)
+      setShowPreferences(false);
+    };
+
+    const handleShowPreferences = () => {
+      setShowPreferences(true);
+    };
+
+    const handleShowClipboardHistory = () => {
+      setShowPreferences(false);
+      setSelectedIndex(clipboardHistory.length > 0 ? 0 : -1);
     };
 
     window.electronAPI.onClipboardHistoryUpdated(handleHistoryUpdate);
+    window.electronAPI.onShowPreferences?.(handleShowPreferences);
+    window.electronAPI.onShowClipboardHistory?.(handleShowClipboardHistory);
 
     // Cleanup function
     return () => {
       window.electronAPI.removeAllListeners('clipboard-history-updated');
+      window.electronAPI.removeAllListeners('show-preferences');
+      window.electronAPI.removeAllListeners('show-clipboard-history');
     };
   }, [selectedIndex]);
 
-  // Auto-select first item when window opens
+  // Auto-select first item when window opens or when search changes
   useEffect(() => {
-    if (clipboardHistory.length > 0 && selectedIndex === -1) {
+    if (filteredHistory.length > 0 && (selectedIndex === -1 || selectedIndex >= filteredHistory.length)) {
       setSelectedIndex(0);
+    } else if (filteredHistory.length === 0) {
+      setSelectedIndex(-1);
     }
-  }, [clipboardHistory, selectedIndex]);
+  }, [filteredHistory, selectedIndex]);
 
-  const handleCopyToClipboard = useCallback(async (index: number) => {
-    if (clipboardHistory[index]) {
+  // Reset selection when search term changes
+  useEffect(() => {
+    if (searchTerm) {
+      setSelectedIndex(filteredHistory.length > 0 ? 0 : -1);
+    }
+  }, [searchTerm, filteredHistory.length]);
+
+  const handleCopyToClipboard = useCallback(async (filteredIndex: number) => {
+    const item = filteredHistory[filteredIndex];
+    if (item) {
       try {
-        await window.electronAPI.copyToClipboard(clipboardHistory[index]);
+        // Find the original index in the full clipboard history
+        const originalIndex = clipboardHistory.findIndex(historyItem => historyItem.id === item.id);
+        if (originalIndex !== -1) {
+          await window.electronAPI.copyToClipboard(clipboardHistory[originalIndex]);
+        }
       } catch (error) {
         console.error('Failed to copy to clipboard:', error);
       }
     }
-  }, [clipboardHistory]);
+  }, [filteredHistory, clipboardHistory]);
 
-  const handleDeleteItem = useCallback(async (index: number) => {
-    try {
-      await window.electronAPI.deleteHistoryItem(index);
-    } catch (error) {
-      console.error('Failed to delete item:', error);
+  const handleDeleteItem = useCallback(async (filteredIndex: number) => {
+    const item = filteredHistory[filteredIndex];
+    if (item) {
+      try {
+        // Find the original index in the full clipboard history
+        const originalIndex = clipboardHistory.findIndex(historyItem => historyItem.id === item.id);
+        if (originalIndex !== -1) {
+          await window.electronAPI.deleteHistoryItem(originalIndex);
+        }
+      } catch (error) {
+        console.error('Failed to delete item:', error);
+      }
     }
+  }, [filteredHistory, clipboardHistory]);
+
+  const handleSearchChange = useCallback((term: string) => {
+    setSearchTerm(term);
+  }, []);
+
+  const handleSearchClear = useCallback(() => {
+    setSearchTerm('');
   }, []);
 
   const handleSelectItem = useCallback((index: number) => {
@@ -72,29 +138,48 @@ const App: React.FC = () => {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {
+      // Check if we're typing in the search input
+      const isInputFocused = document.activeElement?.tagName === 'INPUT';
+      
       if (e.key === 'Escape') {
-        try {
-          await window.electronAPI.closeWindow();
-        } catch (error) {
-          console.error('Failed to close window:', error);
+        if (searchTerm && isInputFocused) {
+          // Clear search if we're in search mode
+          handleSearchClear();
+          e.preventDefault();
+        } else {
+          try {
+            await window.electronAPI.closeWindow();
+          } catch (error) {
+            console.error('Failed to close window:', error);
+          }
+        }
+      } else if (e.key === '/' && !isInputFocused) {
+        // Focus search input when "/" is pressed
+        e.preventDefault();
+        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
         }
       } else if (e.key === 'Backspace' || e.key === 'Delete') {
-        if (selectedIndex >= 0) {
+        if (!isInputFocused && selectedIndex >= 0) {
           handleDeleteItem(selectedIndex);
         }
-      } else if (e.key >= '1' && e.key <= '9') {
+      } else if (e.key >= '1' && e.key <= '9' && !isInputFocused) {
         const index = parseInt(e.key) - 1;
-        if (index < clipboardHistory.length) {
+        if (index < filteredHistory.length) {
           handleCopyToClipboard(index);
         }
-      } else if (e.key === 'ArrowUp') {
+      } else if (e.key === 'ArrowUp' && !isInputFocused) {
         e.preventDefault();
         setSelectedIndex(prev => Math.max(0, prev - 1));
-      } else if (e.key === 'ArrowDown') {
+      } else if (e.key === 'ArrowDown' && !isInputFocused) {
         e.preventDefault();
-        setSelectedIndex(prev => Math.min(clipboardHistory.length - 1, prev + 1));
+        setSelectedIndex(prev => Math.min(filteredHistory.length - 1, prev + 1));
       } else if (e.key === 'Enter') {
-        if (selectedIndex >= 0) {
+        if (isInputFocused) {
+          // If in search input, blur it to allow navigation
+          (document.activeElement as HTMLElement)?.blur();
+        } else if (selectedIndex >= 0) {
           handleCopyToClipboard(selectedIndex);
         }
       }
@@ -102,18 +187,37 @@ const App: React.FC = () => {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [selectedIndex, clipboardHistory.length, handleCopyToClipboard, handleDeleteItem]);
+  }, [selectedIndex, filteredHistory.length, handleCopyToClipboard, handleDeleteItem, searchTerm, handleSearchClear]);
+
+  // Show preferences screen or main clipboard view
+  if (showPreferences) {
+    return <Preferences onClose={() => {
+      setShowPreferences(false);
+      // Ensure we show clipboard history when preferences are closed
+      setSelectedIndex(clipboardHistory.length > 0 ? 0 : -1);
+    }} />;
+  }
 
   return (
     <div className="font-system bg-gradient-primary text-gray-800 h-screen overflow-hidden">
       <div className="h-screen flex flex-col bg-white bg-opacity-95 backdrop-blur-sm">
-        <Header />
+        <Header 
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          onSearchClear={handleSearchClear}
+        />
         
         <div className="history-container flex-1 overflow-y-auto p-2">
           {clipboardHistory.length === 0 ? (
             <EmptyState />
+          ) : filteredHistory.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+              <div className="text-4xl mb-4">🔍</div>
+              <div className="text-lg font-medium mb-2">No results found</div>
+              <div className="text-sm">Try a different search term</div>
+            </div>
           ) : (
-            clipboardHistory.map((item, index) => (
+            filteredHistory.map((item, index) => (
               <ClipboardItem
                 key={item.id}
                 item={item}
@@ -127,7 +231,11 @@ const App: React.FC = () => {
           )}
         </div>
 
-        <StatusBar itemCount={clipboardHistory.length} />
+        <StatusBar 
+          itemCount={searchTerm ? filteredHistory.length : clipboardHistory.length}
+          totalCount={searchTerm ? clipboardHistory.length : undefined}
+          isSearching={!!searchTerm}
+        />
       </div>
     </div>
   );
