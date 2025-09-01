@@ -77,10 +77,13 @@ const App: React.FC = () => {
           // Search in timestamp/date
           const timestampMatch = item.timestamp.toLowerCase().includes(searchLower);
           
+          // Search by item type (e.g., "text", "image")
+          const typeMatch = item.type.toLowerCase().includes(searchLower);
+          
           // Enhanced date searching with relative terms and formats
           const dateMatch = searchDateByTerm(item.timestamp, searchLower);
           
-          return previewMatch || contentMatch || timestampMatch || dateMatch;
+          return previewMatch || contentMatch || timestampMatch || typeMatch || dateMatch;
         } catch (error) {
           console.error('Error filtering item:', error);
           // Fallback to basic content matching if date parsing fails

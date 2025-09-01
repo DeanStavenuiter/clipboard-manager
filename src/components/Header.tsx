@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({
               type="text"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Search by content or dates (1/9/2025, 1-9-2025)..."
+                              placeholder="Search by content, type, or dates"
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white bg-opacity-80 backdrop-blur-sm"
               autoFocus={false}
             />
@@ -47,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({
       )}
 
       <p className="text-xs text-gray-500 mt-3">
-        Click any item to copy it to your clipboard. Search by content or specific dates (1/9/2025, 12-25-2023)
+        Click any item to copy it to your clipboard. Search by content, type (text/image), or dates (1/9/2025)
       </p>
       <div className="text-xs text-gray-400 mt-2">
         <strong>⌘+Shift+V</strong> Toggle window • <strong>⌫</strong> Delete

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ClipboardHistoryItem } from '../../types';
+import type { ClipboardHistoryItem } from '../types';
 
 interface ClipboardItemProps {
   item: ClipboardHistoryItem;
@@ -58,11 +58,19 @@ const ClipboardItem: React.FC<ClipboardItemProps> = ({
     >
       {renderContent()}
       <div className="flex justify-between items-center text-xs text-gray-500">
-        <span className="bg-gradient-index text-white px-1.5 py-0.5 rounded font-semibold flex items-center gap-1">
-          {item.type === 'image' && <span>🖼️</span>}
-          {item.type === 'text' && <span>📝</span>}
-          {index < 9 ? index + 1 : ''}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="bg-gradient-index text-white px-1.5 py-0.5 rounded font-semibold">
+            {index < 9 ? index + 1 : ''}
+          </span>
+          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+            item.type === 'image' 
+              ? 'bg-blue-100 text-blue-700' 
+              : 'bg-green-100 text-green-700'
+          }`}>
+            {item.type === 'image' && '🖼️ Image'}
+            {item.type === 'text' && '📝 Text'}
+          </span>
+        </div>
         <span>{item.timestamp}</span>
         <button
           className="bg-red-500 text-white border-none rounded px-2 py-1 text-xs cursor-pointer transition-colors duration-200 opacity-70 hover:bg-red-600 hover:opacity-100"
