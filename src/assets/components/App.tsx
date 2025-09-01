@@ -4,7 +4,7 @@ import EmptyState from './EmptyState';
 import Header from './Header';
 import StatusBar from './StatusBar';
 import Preferences from './Preferences';
-import type { ClipboardHistoryItem } from '../types';
+import type { ClipboardHistoryItem } from '../../types';
 
 const App: React.FC = () => {
   const [clipboardHistory, setClipboardHistory] = useState<ClipboardHistoryItem[]>([]);

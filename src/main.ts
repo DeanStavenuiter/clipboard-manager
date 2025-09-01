@@ -1,4 +1,5 @@
 import { app, BrowserWindow, globalShortcut, clipboard, ipcMain, Menu, Tray, nativeImage, Notification, screen } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -54,6 +55,7 @@ class ClipboardManager {
     this.loadPreferences();
     this.loadClipboardHistory();
     this.setupApp();
+    this.setupAutoUpdater();
   }
 
   // Load preferences from file
@@ -228,6 +230,14 @@ class ClipboardManager {
         }
       },
       { type: 'separator' },
+      {
+        label: 'Check for Updates...',
+        click: () => {
+          if (process.env.NODE_ENV !== 'development') {
+            autoUpdater.checkForUpdatesAndNotify();
+          }
+        }
+      },
       {
         label: 'Quit Trex',
         accelerator: 'CommandOrControl+Q',
@@ -621,6 +631,59 @@ class ClipboardManager {
       body,
       silent: true // Don't play a sound
     }).show();
+  }
+
+  // Setup auto-updater
+  private setupAutoUpdater(): void {
+    // Don't check for updates in development
+    if (process.env.NODE_ENV === 'development') {
+      return;
+    }
+
+    // Configure auto-updater
+    autoUpdater.checkForUpdatesAndNotify();
+
+    // Auto-updater events
+    autoUpdater.on('checking-for-update', () => {
+      console.log('Checking for update...');
+    });
+
+    autoUpdater.on('update-available', (info) => {
+      console.log('Update available:', info);
+      if (this.preferences.showNotifications) {
+        this.showNotification('Update Available', 'A new version of Trex is being downloaded.');
+      }
+    });
+
+    autoUpdater.on('update-not-available', (info) => {
+      console.log('Update not available:', info);
+    });
+
+    autoUpdater.on('error', (err) => {
+      console.error('Update error:', err);
+    });
+
+    autoUpdater.on('download-progress', (progressObj) => {
+      const percent = Math.round(progressObj.percent);
+      console.log(`Download progress: ${percent}%`);
+    });
+
+    autoUpdater.on('update-downloaded', (info) => {
+      console.log('Update downloaded:', info);
+      if (this.preferences.showNotifications) {
+        this.showNotification('Update Ready', 'Update has been downloaded. Restart Trex to apply the update.');
+      }
+      
+      // Auto-restart after 5 seconds
+      setTimeout(() => {
+        autoUpdater.quitAndInstall();
+      }, 5000);
+    });
+
+    // Check for updates every hour
+    setInterval(() => {
+      autoUpdater.checkForUpdatesAndNotify();
+    }, 60 * 60 * 1000);
   }
 }
 

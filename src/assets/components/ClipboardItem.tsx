@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ClipboardHistoryItem } from '../types';
+import type { ClipboardHistoryItem } from '../../types';
 
 interface ClipboardItemProps {
   item: ClipboardHistoryItem;

@@ -1,189 +1,251 @@
-# Clipboard Manager
+# Trex - Advanced Clipboard Manager
 
-A modern, secure clipboard manager for macOS built with Electron and TypeScript.
+A modern, feature-rich clipboard manager for macOS built with Electron, React, and TypeScript. Trex enhances your productivity by maintaining a searchable history of your clipboard items with intelligent features and seamless user experience.
 
-## Features
+![Trex Logo](assets/trex.png)
 
-- 📋 Clipboard history with up to 25 items (text and images)
-- 🖼️ **Image support** - Copy and paste images from clipboard
-- ⌨️ Global keyboard shortcuts (⌘+Shift+V)
-- 🔒 Secure architecture with context isolation
-- 🎨 Beautiful UI with Tailwind CSS
-- 🚀 TypeScript + React for modern development
-- ⚡ Fast development with Vite and Hot Module Reload
-- 🧩 Component-based architecture
+## ✨ Features
 
-## Development Setup
+### Core Functionality
+- 📋 **Smart Clipboard History** - Up to 25 items (configurable) with text and image support
+- 🔍 **Powerful Search** - Instantly search through clipboard history with real-time filtering
+- 🖼️ **Image Support** - Copy, preview, and manage images with thumbnails and size information
+- ⚙️ **Preferences System** - Customizable settings for history size, notifications, and behavior
+- 🔒 **Password Detection** - Automatically excludes passwords from history for security
 
-### Prerequisites
+### User Experience
+- ⌨️ **Global Shortcuts** - Quick access with ⌘+Shift+V hotkey
+- 🎨 **Beautiful UI** - Modern glass-effect design with smooth animations
+- 📱 **Responsive Design** - Optimized interface that adapts to content
+- 🌙 **System Integration** - Native macOS tray icon and menu integration
+- ⚡ **Fast Performance** - Instant search and smooth interactions
 
-- Node.js (v16 or higher)
-- npm
+### Advanced Features
+- 🔄 **Auto-Updates** - Seamless background updates via GitHub releases
+- 🛡️ **Security First** - Context isolation, secure IPC, password exclusion
+- 💾 **Persistent Storage** - Settings and history saved between sessions
+- 🔔 **Smart Notifications** - Configurable system notifications
+- 🎯 **Keyboard Navigation** - Full keyboard control for power users
+
+## 🚀 Quick Start
 
 ### Installation
+1. Download the latest `Trex-x.x.x.dmg` from [Releases](https://github.com/deanstavenuiter/clipboard-manager/releases)
+2. Open the DMG file and drag Trex to Applications
+3. Launch Trex from Applications or Spotlight
+4. Use ⌘+Shift+V to access your clipboard history
 
+### First Launch
+- Trex runs in the background (tray-only app)
+- Click the Trex icon in the menu bar for options
+- Use ⌘+Shift+V to open the clipboard window
+- Start copying items to build your history
+
+## 📖 User Guide
+
+### Keyboard Shortcuts
+- **⌘+Shift+V** - Toggle clipboard window
+- **1-9** - Quick access to clipboard items (first 9)
+- **↑/↓** - Navigate through items
+- **Enter** - Copy selected item to clipboard
+- **⌫/Delete** - Delete selected item
+- **Escape** - Close window
+- **/** - Focus search input
+
+### Search Functionality
+- Type in the search box to filter clipboard items
+- Searches both visible text and full content
+- Works with both text and image descriptions
+- Real-time filtering with instant results
+- Clear search with the ✕ button or Escape
+
+### Settings & Preferences
+- Click the gear icon in the footer or use tray menu
+- Configure maximum history items (1-100)
+- Toggle launch at startup
+- Enable/disable notifications
+- Customize global hotkey
+- Set auto-clear intervals
+- Toggle password exclusion
+
+### Tray Menu Options
+- **Open Trex** (⌘+Shift+V) - Open clipboard window
+- **Clear History** - Remove all items
+- **Preferences** - Open settings
+- **Check for Updates** - Manual update check
+- **Quit Trex** (⌘+Q) - Exit application
+
+## 🛠️ Development
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm
+- macOS (for building)
+
+### Setup
 ```bash
+# Clone repository
+git clone https://github.com/deanstavenuiter/clipboard-manager.git
+cd clipboard-manager
+
+# Install dependencies
 npm install
 ```
 
-### Development
-
-For development with React Hot Module Reload and TypeScript:
-
+### Development Commands
 ```bash
+# Start development server with hot reload
 npm run dev
-```
 
-This will start:
-- Vite dev server on `http://localhost:5173` (React app)
-- TypeScript compiler in watch mode
-- Electron app pointing to the dev server
-
-For a production build and run:
-
-```bash
-npm start
-```
-
-### Building
-
-Build the TypeScript and prepare distribution files:
-
-```bash
+# Build for production
 npm run build
+
+# Create distributable package
+npm run dist
+
+# Publish release with auto-update support
+npm run dist:publish
 ```
 
 ### Project Structure
-
 ```
-clipboard-manager/
+trex/
 ├── src/
-│   ├── components/      # React components
-│   │   ├── App.tsx           # Main app component
+│   ├── components/           # React components
+│   │   ├── App.tsx          # Main application component
 │   │   ├── ClipboardItem.tsx # Individual clipboard item
-│   │   ├── EmptyState.tsx    # Empty state component
-│   │   ├── Header.tsx        # App header
-│   │   └── StatusBar.tsx     # Bottom status bar
-│   ├── main.ts          # Main Electron process (TypeScript)
-│   ├── renderer.tsx     # React entry point
-│   ├── preload.js       # Secure preload script
-│   ├── index.html       # HTML shell for React app
-│   ├── types.d.ts       # TypeScript type definitions
-│   └── styles/
-│       └── global.css   # Global CSS styles
-├── dist/                # Built files
-│   ├── assets/          # Vite-built React assets
-│   ├── main.js          # Compiled Electron main
-│   ├── index.html       # Built HTML
-│   └── preload.js       # Copied preload
-├── vite.config.ts       # Vite configuration
-├── package.json
-├── tsconfig.json        # TypeScript configuration
-└── README.md
+│   │   ├── EmptyState.tsx   # Empty state display
+│   │   ├── Header.tsx       # App header with search
+│   │   ├── StatusBar.tsx    # Footer with settings
+│   │   └── Preferences.tsx  # Settings panel
+│   ├── styles/
+│   │   └── global.css       # Custom styles and animations
+│   ├── main.ts              # Electron main process
+│   ├── renderer.tsx         # React entry point
+│   ├── preload.js          # Secure IPC bridge
+│   ├── index.html          # Application shell
+│   └── types.d.ts          # TypeScript definitions
+├── assets/                  # Application assets
+├── dist/                    # Built files
+├── release/                 # Distribution packages
+└── docs/                    # Documentation
 ```
 
-## Styling Architecture
+## 🔧 Technical Details
 
-- 🎨 **Tailwind CSS**: Utility-first CSS framework via CDN
-- 📝 **Global CSS**: Custom styles in `src/styles/global.css`
-- 🎯 **Organized Structure**: Separated concerns for maintainability
-- 🌈 **Custom Components**: Purple gradient theme with glass effects
-- 📱 **Responsive Design**: Optimized for different screen sizes
+### Architecture
+- **Frontend**: React 18 + TypeScript + Tailwind CSS
+- **Backend**: Electron 28 + Node.js
+- **Build System**: Vite (fast dev server + HMR)
+- **Packaging**: electron-builder
+- **Updates**: electron-updater with GitHub releases
 
-### Adding Custom Styles
+### Security Features
+- ✅ **Context Isolation** - Secure renderer process
+- ✅ **Disabled Node Integration** - Prevents script injection
+- ✅ **Secure IPC** - Controlled communication via preload
+- ✅ **Password Detection** - Heuristic-based password exclusion
+- ✅ **Sandboxed Renderer** - Isolated execution environment
 
-1. **For utility classes**: Add to `src/styles/global.css`
-2. **For Tailwind config**: Modify the config in `index.html`
-3. **Component-specific**: Use Tailwind classes in HTML
-
-## Security Features
-
-- ✅ **Context Isolation**: Enabled for security
-- ✅ **Node Integration**: Disabled in renderer
-- ✅ **Secure IPC**: Using preload script for communication
-- ✅ **No Remote Module**: Disabled for security
-
-## How Clipboard Monitoring Works
-
-### macOS Native vs Your App
-
-**🍎 macOS System Clipboard:**
-- Only holds **1 item** at a time
-- **No history** - when you copy something new, the old item is lost forever
-- System-wide - any app can read/write to it
-
-**📱 Your Clipboard Manager:**
-- **Monitors** the system clipboard every 500ms
-- **Saves history** of up to 25 items in memory (text and images)
-- **Provides UI** to access old clipboard items with thumbnails for images
-
-### The Process Step by Step
-
-1. **User copies text or images** (⌘+C) anywhere in macOS
-2. **macOS updates system clipboard** (overwrites previous content)
-3. **Your app checks clipboard every 500ms** for both text and images
-4. **If content is new**, your app adds it to its internal history array
-5. **React UI updates** to show all historical items with thumbnails for images
-6. **User can click any item** to copy it back to system clipboard
-
-### Storage & Privacy
-
+### Data Management
 ```typescript
-// History stored in RAM only (not saved to disk)
-private clipboardHistory: ClipboardHistoryItem[] = [];
-
-// Each item can be text or image
 interface ClipboardHistoryItem {
-  id: string;
-  type: 'text' | 'image';
-  content: string; // Text content or base64 image data
-  timestamp: string;
-  preview: string; // Truncated text or image size info
-  size?: number; // For images: file size in bytes
+  id: string;                    // Unique identifier
+  type: 'text' | 'image';       // Content type
+  content: string;              // Full content or base64 data
+  timestamp: string;            // Human-readable time
+  preview: string;              // Truncated preview text
+  size?: number;                // File size for images
 }
 ```
 
-**Key Points:**
-- ❌ **Not persistent** - History is lost when app closes
-- ✅ **Privacy-focused** - Nothing saved to disk
-- ✅ **Fast access** - All data in memory
-- ✅ **Limited size** - Max 25 items to prevent memory bloat
-- ✅ **Text & Images** - Monitors both text and image clipboard content
-- 🖼️ **Image thumbnails** - Shows preview of copied images
+### Clipboard Monitoring
+- **Frequency**: 1000ms intervals (optimized for battery life)
+- **Content Types**: Text and images
+- **Duplicate Prevention**: Content-based deduplication
+- **Memory Management**: Automatic cleanup and size limits
 
-### Monitoring Frequency
+### Auto-Update System
+- **Provider**: GitHub Releases
+- **Schedule**: Hourly checks + manual triggers
+- **Process**: Background download → notification → auto-restart
+- **Fallback**: Manual update checking via tray menu
 
-The app checks the clipboard every **500ms** because:
-- **Responsive**: Catches changes quickly
-- **Battery-friendly**: Not checking too frequently
-- **Reliable**: Doesn't miss clipboard changes
-- **CPU-efficient**: Minimal system impact
+## 🎨 Customization
 
-## Keyboard Shortcuts
+### Styling
+- Built with Tailwind CSS utility classes
+- Custom animations and transitions in `global.css`
+- Glass-effect design with backdrop blur
+- Consistent color scheme and typography
 
-- `⌘+Shift+V` - Toggle clipboard window
-- `1-9` - Quick access to clipboard items
-- `↑/↓` - Navigate clipboard items
-- `Enter` - Copy selected item
-- `Backspace/Delete` - Delete selected item
-- `Escape` - Close window
+### Configuration
+Settings are stored in `~/Library/Application Support/Trex/`:
+- `preferences.json` - User preferences
+- `clipboardHistory.json` - Persistent clipboard history
 
-## Building for Distribution
+## 🔄 Release Process
 
-Create a distributable app:
-
+### Version Management
 ```bash
-npm run dist
+# Patch release (1.0.0 → 1.0.1)
+npm version patch
+
+# Minor release (1.0.0 → 1.1.0)
+npm version minor
+
+# Major release (1.0.0 → 2.0.0)
+npm version major
 ```
 
-This will create platform-specific installers in the `dist/` directory.
+### Publishing
+```bash
+# Set GitHub token
+export GH_TOKEN=your_github_token
 
-## Modern Architecture Benefits
+# Build and publish
+npm run dist:publish
+```
 
-- **React + TypeScript**: Component-based architecture with type safety
-- **Secure by Default**: Modern Electron security practices
-- **Hot Module Reload**: Instant development feedback with Vite
-- **Component-Based**: Reusable, maintainable UI components
-- **Clean Separation**: Main process, renderer process, and secure IPC
-- **Development Tools**: Excellent debugging and development experience
-- **Scalable**: Easy to add new features and components
+### Auto-Update Flow
+1. Version bump → Git tag
+2. Build → Create DMG files
+3. Publish → GitHub release
+4. Notify → Existing users get update
+
+## 📊 System Requirements
+
+- **OS**: macOS 10.15 (Catalina) or later
+- **Architecture**: Universal (Intel + Apple Silicon)
+- **Memory**: 50MB RAM (typical usage)
+- **Storage**: 100MB disk space
+- **Permissions**: Accessibility (for global shortcuts)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [Electron](https://electronjs.org/)
+- UI powered by [React](https://reactjs.org/) and [Tailwind CSS](https://tailwindcss.com/)
+- Icons from [Google Material Icons](https://fonts.google.com/icons)
+- Auto-updates via [electron-updater](https://github.com/electron-userland/electron-updater)
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/deanstavenuiter/clipboard-manager/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/deanstavenuiter/clipboard-manager/discussions)
+- **Email**: [dean@example.com](mailto:dean@example.com)
+
+---
+
+**Trex** - Making clipboard management effortless and powerful. 🦖✨
