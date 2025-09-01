@@ -124,12 +124,14 @@ class ClipboardManager {
 
   // Setup the app
   private setupApp(): void {
-    // Hide from dock on macOS (make it a tray-only app)
-    if (process.platform === 'darwin') {
-      app.dock.hide();
-    }
-
     app.whenReady().then(() => {
+      // Hide from dock on macOS (make it a tray-only app)
+      if (process.platform === 'darwin') {
+        app.dock.hide();
+        // Remove default menu bar to ensure tray-only behavior
+        Menu.setApplicationMenu(null);
+      }
+      
       this.createWindow();
       this.createTray();
       this.registerGlobalShortcuts();
@@ -189,7 +191,10 @@ class ClipboardManager {
 
   // Create the tray icon
   private createTray(): void {
-    const iconPath = 'assets/trex.png';
+    // Use correct path for production vs development
+    const iconPath = process.env.NODE_ENV === 'development' 
+      ? 'assets/trex.png'
+      : path.join(__dirname, 'assets/trex.png');
     
     let icon = nativeImage.createFromPath(iconPath)
     
@@ -251,7 +256,9 @@ class ClipboardManager {
     this.tray.setContextMenu(contextMenu);
     
     // Click to toggle window
-    
+    this.tray.on('click', () => {
+      this.toggleWindow();
+    });
   }
 
   // Calculate optimal window position based on cursor location

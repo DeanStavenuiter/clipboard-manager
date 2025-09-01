@@ -4,7 +4,7 @@ import EmptyState from './EmptyState';
 import Header from './Header';
 import StatusBar from './StatusBar';
 import Preferences from './Preferences';
-import type { ClipboardHistoryItem } from '../../types';
+import type { ClipboardHistoryItem } from '../types';
 
 const App: React.FC = () => {
   const [clipboardHistory, setClipboardHistory] = useState<ClipboardHistoryItem[]>([]);
@@ -12,23 +12,87 @@ const App: React.FC = () => {
   const [showPreferences, setShowPreferences] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  // Date utility function
+  const isSameDay = (date1: Date, date2: Date): boolean => {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
+  };
+
+  // Simple date format searching  
+  const searchDateByTerm = (timestamp: string, searchTermParam: string): boolean => {
+    try {
+      // Only handle specific date formats: M/D/YYYY, MM/DD/YYYY, M-D-YYYY, MM-DD-YYYY
+      const dateFormats = [
+        /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, // M/D/YYYY or MM/DD/YYYY
+        /^(\d{1,2})-(\d{1,2})-(\d{4})$/,   // M-D-YYYY or MM-DD-YYYY
+      ];
+      
+      for (const format of dateFormats) {
+        const match = searchTermParam.match(format);
+        if (match) {
+          const [, month, day, year] = match;
+          
+          // Parse the search date
+          const searchDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          if (isNaN(searchDate.getTime())) {
+            return false;
+          }
+          
+          // Parse the item timestamp
+          const itemDate = new Date(timestamp);
+          if (isNaN(itemDate.getTime())) {
+            return false;
+          }
+          
+          // Compare dates (same day)
+          return isSameDay(itemDate, searchDate);
+        }
+      }
+      
+      return false;
+    } catch (error) {
+      return false;
+    }
+  };
+
   // Filter clipboard history based on search term
   const filteredHistory = React.useMemo(() => {
-    if (!searchTerm.trim()) {
+    try {
+      if (!searchTerm.trim()) {
+        return clipboardHistory;
+      }
+      
+      const searchLower = searchTerm.toLowerCase().trim();
+      
+      return clipboardHistory.filter(item => {
+        try {
+          // Search in preview text for both text and image items
+          const previewMatch = item.preview.toLowerCase().includes(searchLower);
+          
+          // For text items, also search in the full content
+          const contentMatch = item.type === 'text' && 
+            item.content.toLowerCase().includes(searchLower);
+          
+          // Search in timestamp/date
+          const timestampMatch = item.timestamp.toLowerCase().includes(searchLower);
+          
+          // Enhanced date searching with relative terms and formats
+          const dateMatch = searchDateByTerm(item.timestamp, searchLower);
+          
+          return previewMatch || contentMatch || timestampMatch || dateMatch;
+        } catch (error) {
+          console.error('Error filtering item:', error);
+          // Fallback to basic content matching if date parsing fails
+          return item.preview.toLowerCase().includes(searchLower) ||
+                 (item.type === 'text' && item.content.toLowerCase().includes(searchLower));
+        }
+      });
+    } catch (error) {
+      console.error('Error in search filtering:', error);
+      // Return unfiltered history if there's a major error
       return clipboardHistory;
     }
-    
-    const searchLower = searchTerm.toLowerCase().trim();
-    return clipboardHistory.filter(item => {
-      // Search in preview text for both text and image items
-      const previewMatch = item.preview.toLowerCase().includes(searchLower);
-      
-      // For text items, also search in the full content
-      const contentMatch = item.type === 'text' && 
-        item.content.toLowerCase().includes(searchLower);
-      
-      return previewMatch || contentMatch;
-    });
   }, [clipboardHistory, searchTerm]);
 
   // Load initial history

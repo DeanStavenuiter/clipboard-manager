@@ -9,7 +9,9 @@
     "strict": true,
     "jsx": "react-jsx",
     "allowJs": true,
-    "noEmit": true
+    "noEmit": true,
+    "typeRoots": ["./node_modules/@types", "./src"],
+    "types": []
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
