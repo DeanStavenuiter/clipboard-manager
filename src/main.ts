@@ -88,6 +88,7 @@ class ClipboardManager {
   private loadClipboardHistory(): void {
     try {
       if (fs.existsSync(this.historyPath)) {
+        console.log("Loading clipboard history from:", this.historyPath)
         const data = fs.readFileSync(this.historyPath, 'utf8');
         const history = JSON.parse(data);
         

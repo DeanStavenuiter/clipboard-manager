@@ -7,7 +7,7 @@ A modern, feature-rich clipboard manager for macOS built with Electron, React, a
 ## ✨ Features
 
 ### Core Functionality
-- 📋 **Smart Clipboard History** - Up to 25 items (configurable) with text and image support
+- 📋 **Smart Clipboard History** - Configurable history size (minimum 5 items) with text and image support
 - 🔍 **Powerful Search** - Instantly search through clipboard history with real-time filtering
 - 🖼️ **Image Support** - Copy, preview, and manage images with thumbnails and size information
 - ⚙️ **Preferences System** - Customizable settings for history size, notifications, and behavior
@@ -61,7 +61,7 @@ A modern, feature-rich clipboard manager for macOS built with Electron, React, a
 
 ### Settings & Preferences
 - Click the gear icon in the footer or use tray menu
-- Configure maximum history items (1-100)
+- Configure maximum history items (minimum 5, no upper limit)
 - Toggle launch at startup
 - Enable/disable notifications
 - Customize global hotkey
@@ -156,11 +156,12 @@ interface ClipboardHistoryItem {
   timestamp: string;            // Human-readable time
   preview: string;              // Truncated preview text
   size?: number;                // File size for images
+  isFavorite?: boolean;         // Whether item is marked as favorite
 }
 ```
 
 ### Clipboard Monitoring
-- **Frequency**: 1000ms intervals (optimized for battery life)
+- **Frequency**: 1000ms intervals (reasonable balance between responsiveness and system resources)
 - **Content Types**: Text and images
 - **Duplicate Prevention**: Content-based deduplication
 - **Memory Management**: Automatic cleanup and size limits
@@ -198,21 +199,6 @@ npm version minor
 npm version major
 ```
 
-### Publishing
-```bash
-# Set GitHub token
-export GH_TOKEN=your_github_token
-
-# Build and publish
-npm run dist:publish
-```
-
-### Auto-Update Flow
-1. Version bump → Git tag
-2. Build → Create DMG files
-3. Publish → GitHub release
-4. Notify → Existing users get update
-
 ## 📊 System Requirements
 
 - **OS**: macOS 10.15 (Catalina) or later
@@ -244,7 +230,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: [GitHub Issues](https://github.com/deanstavenuiter/clipboard-manager/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/deanstavenuiter/clipboard-manager/discussions)
-- **Email**: [dean@example.com](mailto:dean@example.com)
+- **Email**: [dean@example.com](mailto:info@deanstavenuiter.nl)
 
 ---
 
