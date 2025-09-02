@@ -15,7 +15,7 @@
         "electron-dev": "electron .",
         "electron-pack": "electron-builder",
         "dist": "electron-builder --publish=never",
-        "dist:publish": "electron-builder --publish=always",
+        "dist:publish": "dotenv -e .env -- electron-builder --publish always",
         "pack": "electron-builder --dir",
         "build:icons": "png2icons assets/trex.png assets/icon -icns"
     },
@@ -40,6 +40,7 @@
         "@types/react-dom": "^18.2.0",
         "@vitejs/plugin-react": "^4.2.0",
         "concurrently": "^8.2.0",
+        "dotenv-cli": "^10.0.0",
         "electron": "^28.0.0",
         "electron-builder": "^24.6.4",
         "png2icons": "^2.0.1",
