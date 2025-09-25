@@ -152,7 +152,7 @@ class ClipboardManager {
       width: 500,
       height: 600,
       show: false,
-      frame: true,
+      frame: false,
       resizable: true,
       alwaysOnTop: true,
       skipTaskbar: true,  // Hide from dock/taskbar
