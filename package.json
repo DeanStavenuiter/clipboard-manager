@@ -17,7 +17,13 @@
         "dist": "electron-builder --publish=never",
         "dist:publish": "dotenv -e .env -- electron-builder --publish always",
         "pack": "electron-builder --dir",
-        "build:icons": "png2icons assets/trex.png assets/icon -icns"
+        "build:icons": "png2icons assets/trex.png assets/icon -icns",
+        "version:patch": "npm version patch && git push && git push --tags",
+        "version:minor": "npm version minor && git push && git push --tags",
+        "version:major": "npm version major && git push && git push --tags",
+        "release:patch": "npm run version:patch",
+        "release:minor": "npm run version:minor",
+        "release:major": "npm run version:major"
     },
     "keywords": [
         "clipboard",
@@ -59,7 +65,8 @@
             {
                 "provider": "github",
                 "owner": "deanstavenuiter",
-                "repo": "clipboard-manager"
+                "repo": "clipboard-manager",
+                "releaseType": "release"
             }
         ],
         "mac": {
