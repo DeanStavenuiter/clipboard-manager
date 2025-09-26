@@ -1,6 +1,6 @@
 {
     "name": "trex",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Trex is a clipboard manager for macOS with history and keyboard shortcuts",
     "main": "dist/main.js",
     "scripts": {
