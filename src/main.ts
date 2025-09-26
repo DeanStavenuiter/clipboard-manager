@@ -129,7 +129,7 @@ class ClipboardManager {
     app.whenReady().then(() => {
       // Hide from dock on macOS (make it a tray-only app)
       if (process.platform === 'darwin') {
-        app.dock.hide();
+        app.dock?.hide();
         // Remove default menu bar to ensure tray-only behavior
         Menu.setApplicationMenu(null);
       }
