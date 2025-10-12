@@ -164,6 +164,8 @@ class ClipboardManager {
       }
     });
 
+    // Show on all spaces/desktops to prevent space switching on macOS
+    this.mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 
     // Load from Vite dev server in development, built files in production
     if (process.env.NODE_ENV === 'development') {
