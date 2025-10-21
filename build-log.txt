@@ -1,0 +1,289 @@
+
+> trex@1.1.2 dist:notarize
+> dotenv -e .env -- electron-builder --publish=never && node scripts/notarize-dmg.js
+
+  • electron-builder  version=24.13.3 os=24.6.0
+  • loaded configuration  file=package.json ("build" field)
+  • rebuilding native dependencies  dependencies=canvas@3.2.0 platform=darwin arch=x64
+  • install prebuilt binary  name=canvas version=3.2.0 platform=darwin arch=x64 napi= 
+  • packaging       platform=darwin arch=x64 electron=35.7.5 appOutDir=release/mac
+  • signing         file=release/mac/Trex.app platform=darwin type=distribution identity=23724D65CE5393E62AFD77E8CA6EDD2E3F8C9D0A provisioningProfile=none
+  • skipped macOS notarization  reason=`notarize` options were set explicitly `false`
+📝 Starting notarization process...
+   App path: /Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/mac/Trex.app
+   Bundle ID: com.deanstavenuiter.trex
+   Team ID: U3F24QNV4V
+❌ Notarization/stapling failed: Failed to staple your application with code: 65
+
+Processing: /Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/mac/Trex.app
+Properties are {
+    NSURLIsDirectoryKey = 1;
+    NSURLIsPackageKey = 1;
+    NSURLIsSymbolicLinkKey = 0;
+    NSURLLocalizedTypeDescriptionKey = Application;
+    NSURLTypeIdentifierKey = "com.apple.application-bundle";
+    "_NSURLIsApplicationKey" = 1;
+}
+Props are {
+    cdhash = {length = 20, bytes = 0xd89b85d0b66c5e4bce73aeded1a0fdc42936bcea};
+    digestAlgorithm = 2;
+    flags = 65536;
+    secureTimestamp = "2025-10-19 19:31:25 +0000";
+    signingId = "com.deanstavenuiter.trex";
+    teamId = U3F24QNV4V;
+}
+JSON Data is {
+    records =     (
+                {
+            recordName = "2/2/d89b85d0b66c5e4bce73aeded1a0fdc42936bcea";
+        }
+    );
+}
+ Headers: {
+    "Content-Type" = "application/json";
+}
+Domain is api.apple-cloudkit.com
+Response is <NSHTTPURLResponse: 0x11df15f10> { URL: https://api.apple-cloudkit.com/database/1/com.apple.gk.ticket-delivery/production/public/records/lookup } { Status Code: 200, Headers {
+    Connection =     (
+        "keep-alive"
+    );
+    "Content-Encoding" =     (
+        gzip
+    );
+    "Content-Type" =     (
+        "application/json; charset=UTF-8"
+    );
+    Date =     (
+        "Sun, 19 Oct 2025 19:33:19 GMT"
+    );
+    Server =     (
+        "AppleHttpServer/7347b443149f"
+    );
+    "Strict-Transport-Security" =     (
+        "max-age=31536000; includeSubDomains;"
+    );
+    "Transfer-Encoding" =     (
+        Identity
+    );
+    Via =     (
+        "xrail:icloud-xrail-group68-ext-675cd54f99-c946s:8301:25R307:grp68,631194250daa17e24277dea86cf30319:bf8d24524965e9dac368d92adc7350ef:nlhfd1"
+    );
+    "X-Apple-CloudKit-Version" =     (
+        "1.0"
+    );
+    "X-Apple-Edge-Response-Time" =     (
+        107
+    );
+    "X-Apple-Request-UUID" =     (
+        "85fbb13e-42c7-4dee-a413-42ab951bca96"
+    );
+    "X-Responding-Instance" =     (
+        "ckdatabasews:2000115695:prod_p63_ckdatabasews_100percent_64f6964b46_hr5nr:8080:2538B397:0c9279107463b7537a4c28007b8c0fc5ec8ef63d"
+    );
+    "access-control-expose-headers" =     (
+        "X-Apple-Request-UUID,X-Responding-Instance,Via"
+    );
+    "x-apple-user-partition" =     (
+        63
+    );
+} }
+Size of data is 4081
+JSON Response is: {
+    records =     (
+                {
+            created =             {
+                deviceID = 2;
+                timestamp = 1760902394167;
+                userRecordName = "_b133e60953755a92966d7ca08d9c731a";
+            };
+            deleted = 0;
+            fields =             {
+                signedTicket =                 {
+                    type = BYTES;
+                    value = "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";
+                };
+            };
+            modified =             {
+                deviceID = 2;
+                timestamp = 1760902394167;
+                userRecordName = "_b133e60953755a92966d7ca08d9c731a";
+            };
+            pluginFields =             {
+            };
+            recordChangeTag = mgy3tj5g;
+            recordName = "2/2/d89b85d0b66c5e4bce73aeded1a0fdc42936bcea";
+            recordType = DeveloperIDTicket;
+        }
+    );
+}
+Downloaded ticket has been stored at file:///var/folders/c0/gx4hc_jj2rz__lfhnzvlzp9h0000gn/T/85fbb13e-42c7-4dee-a413-42ab951bca96.ticket.
+Could not validate ticket for /Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/mac/Trex.app
+The staple and validate action failed! Error 65.
+
+⚠️  Stapling failed, but the app is notarized on Apple servers
+The DMG will be stapled after it is created
+  • building        target=DMG arch=x64 file=release/Trex-1.1.2.dmg
+  • Detected arm64 process, HFS+ is unavailable. Creating dmg with APFS - supports Mac OSX 10.12+
+  • rebuilding native dependencies  dependencies=canvas@3.2.0 platform=darwin arch=arm64
+  • install prebuilt binary  name=canvas version=3.2.0 platform=darwin arch=arm64 napi= 
+  • packaging       platform=darwin arch=arm64 electron=35.7.5 appOutDir=release/mac-arm64
+  • signing         file=release/mac-arm64/Trex.app platform=darwin type=distribution identity=23724D65CE5393E62AFD77E8CA6EDD2E3F8C9D0A provisioningProfile=none
+  • building block map  blockMapFile=release/Trex-1.1.2.dmg.blockmap
+  • skipped macOS notarization  reason=`notarize` options were set explicitly `false`
+📝 Starting notarization process...
+   App path: /Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/mac-arm64/Trex.app
+   Bundle ID: com.deanstavenuiter.trex
+   Team ID: U3F24QNV4V
+❌ Notarization/stapling failed: Failed to staple your application with code: 65
+
+Processing: /Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/mac-arm64/Trex.app
+Properties are {
+    NSURLIsDirectoryKey = 1;
+    NSURLIsPackageKey = 1;
+    NSURLIsSymbolicLinkKey = 0;
+    NSURLLocalizedTypeDescriptionKey = Application;
+    NSURLTypeIdentifierKey = "com.apple.application-bundle";
+    "_NSURLIsApplicationKey" = 1;
+}
+Props are {
+    cdhash = {length = 20, bytes = 0xef7c7bffdf227f97599b7e32ad4137823ae00b1a};
+    digestAlgorithm = 2;
+    flags = 65536;
+    secureTimestamp = "2025-10-19 19:34:16 +0000";
+    signingId = "com.deanstavenuiter.trex";
+    teamId = U3F24QNV4V;
+}
+JSON Data is {
+    records =     (
+                {
+            recordName = "2/2/ef7c7bffdf227f97599b7e32ad4137823ae00b1a";
+        }
+    );
+}
+ Headers: {
+    "Content-Type" = "application/json";
+}
+Domain is api.apple-cloudkit.com
+Response is <NSHTTPURLResponse: 0x12d71b460> { URL: https://api.apple-cloudkit.com/database/1/com.apple.gk.ticket-delivery/production/public/records/lookup } { Status Code: 200, Headers {
+    Connection =     (
+        "keep-alive"
+    );
+    "Content-Encoding" =     (
+        gzip
+    );
+    "Content-Type" =     (
+        "application/json; charset=UTF-8"
+    );
+    Date =     (
+        "Sun, 19 Oct 2025 19:36:18 GMT"
+    );
+    Server =     (
+        "AppleHttpServer/7347b443149f"
+    );
+    "Strict-Transport-Security" =     (
+        "max-age=31536000; includeSubDomains;"
+    );
+    "Transfer-Encoding" =     (
+        Identity
+    );
+    Via =     (
+        "xrail:icloud-xrail-group68-ext-675cd54f99-7pvvq:8301:25R307:grp68,631194250daa17e24277dea86cf30319:1c60fb003aa37bc712be4012a8589f7d:nlhfd1"
+    );
+    "X-Apple-CloudKit-Version" =     (
+        "1.0"
+    );
+    "X-Apple-Edge-Response-Time" =     (
+        102
+    );
+    "X-Apple-Request-UUID" =     (
+        "509dd274-1fb0-4fba-a87a-80a5234a6d8e"
+    );
+    "X-Responding-Instance" =     (
+        "ckdatabasews:1802365440:prod_p63_ckdatabasews_100percent_64f6964b46_8lqjt:8080:2538B397:0c9279107463b7537a4c28007b8c0fc5ec8ef63d"
+    );
+    "access-control-expose-headers" =     (
+        "X-Apple-Request-UUID,X-Responding-Instance,Via"
+    );
+    "x-apple-user-partition" =     (
+        63
+    );
+} }
+Size of data is 4081
+JSON Response is: {
+    records =     (
+                {
+            created =             {
+                deviceID = 2;
+                timestamp = 1760902565341;
+                userRecordName = "_b133e60953755a92966d7ca08d9c731a";
+            };
+            deleted = 0;
+            fields =             {
+                signedTicket =                 {
+                    type = BYTES;
+                    value = "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";
+                };
+            };
+            modified =             {
+                deviceID = 2;
+                timestamp = 1760902565341;
+                userRecordName = "_b133e60953755a92966d7ca08d9c731a";
+            };
+            pluginFields =             {
+            };
+            recordChangeTag = mgy3x78a;
+            recordName = "2/2/ef7c7bffdf227f97599b7e32ad4137823ae00b1a";
+            recordType = DeveloperIDTicket;
+        }
+    );
+}
+Downloaded ticket has been stored at file:///var/folders/c0/gx4hc_jj2rz__lfhnzvlzp9h0000gn/T/509dd274-1fb0-4fba-a87a-80a5234a6d8e.ticket.
+Could not validate ticket for /Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/mac-arm64/Trex.app
+The staple and validate action failed! Error 65.
+
+⚠️  Stapling failed, but the app is notarized on Apple servers
+The DMG will be stapled after it is created
+  • building        target=DMG arch=arm64 file=release/Trex-1.1.2-arm64.dmg
+  • Detected arm64 process, HFS+ is unavailable. Creating dmg with APFS - supports Mac OSX 10.12+
+  • building block map  blockMapFile=release/Trex-1.1.2-arm64.dmg.blockmap
+
+🔨 Notarizing and stapling DMG files...
+
+📦 Processing: Trex-1.1.2-arm64.dmg
+   Submitting to Apple for notarization...
+Conducting pre-submission checks for Trex-1.1.2-arm64.dmg and initiating connection to the Apple notary service...
+Submission ID received
+  id: 32a93a02-4b08-40fd-84f0-689091c4dc7d
+Successfully uploaded file
+  id: 32a93a02-4b08-40fd-84f0-689091c4dc7d
+  path: /Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/Trex-1.1.2-arm64.dmg
+Waiting for processing to complete.
+Current status: In Progress...Current status: In Progress....Current status: In Progress.....Current status: In Progress......Current status: In Progress.......Current status: In Progress........Current status: In Progress.........Current status: In Progress..........Current status: In Progress...........Current status: In Progress............Current status: In Progress.............Current status: Accepted..............Processing complete
+  id: 32a93a02-4b08-40fd-84f0-689091c4dc7d
+  status: Accepted
+
+   ✅ Notarization complete for Trex-1.1.2-arm64.dmg
+   Stapling...
+Processing: /Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/Trex-1.1.2-arm64.dmg
+Could not validate ticket for /Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/Trex-1.1.2-arm64.dmg
+The staple and validate action failed! Error 65.
+   ❌ Failed to notarize/staple Trex-1.1.2-arm64.dmg
+   Error: Command failed: xcrun stapler staple "/Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/Trex-1.1.2-arm64.dmg"
+Error: Error: Command failed: xcrun stapler staple "/Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/release/Trex-1.1.2-arm64.dmg"
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at checkExecSyncError (node:child_process:891:11)
+    at execSync (node:child_process:963:15)
+    at notarizeDMG (/Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/scripts/notarize-dmg.js:63:7)
+    at Object.<anonymous> (/Users/deanstavenuiter/Desktop/coding/clipboard-manager-app/scripts/notarize-dmg.js:83:3)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12) {
+  status: 65,
+  signal: null,
+  output: [ null, null, null ],
+  pid: 58323,
+  stdout: null,
+  stderr: null
+}
